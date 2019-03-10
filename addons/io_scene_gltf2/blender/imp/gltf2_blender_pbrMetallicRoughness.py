@@ -198,6 +198,11 @@ class BlenderPbr():
                 uvmap["gltf2_texcoord"] = 0  # TODO set in pre_compute instead of here
             # UV Map will be set after object/UVMap creation
 
+            if pypbr.base_color_texture.extensions is not None:
+                if 'KHR_texture_transform' in pypbr.base_color_texture.extensions.keys():
+                    extension = pypbr.base_color_texture.extensions['KHR_texture_transform']
+                    mapping.scale = extension['scale'][0], extension['scale'][1], 1
+
             # Create links
             if vertex_color:
                 node_tree.links.new(vc_mult_node.inputs[2], attribute_node.outputs[0])

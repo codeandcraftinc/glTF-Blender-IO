@@ -83,6 +83,11 @@ class BlenderEmissiveMap():
             text.label = 'EMISSIVE'
             text.location = -1000, 1000
 
+            if pymaterial.emissive_texture.extensions is not None:
+                if 'KHR_texture_transform' in pymaterial.emissive_texture.extensions.keys():
+                    extension = pymaterial.emissive_texture.extensions['KHR_texture_transform']
+                    mapping.scale = extension['scale'][0], extension['scale'][1], 1
+
             # create links
             node_tree.links.new(mapping.inputs[0], uvmap.outputs[0])
             node_tree.links.new(text.inputs[0], mapping.outputs[0])
