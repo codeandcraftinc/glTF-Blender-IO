@@ -15,6 +15,7 @@
 import bpy
 from .gltf2_blender_texture import BlenderTextureInfo
 from ..com.gltf2_blender_material_helpers import get_preoutput_node_output
+from ..com.gltf2_blender_conversion import texture_transform_gltf_to_blender
 
 
 class BlenderEmissiveMap():
@@ -86,7 +87,10 @@ class BlenderEmissiveMap():
             if pymaterial.emissive_texture.extensions is not None:
                 if 'KHR_texture_transform' in pymaterial.emissive_texture.extensions.keys():
                     extension = pymaterial.emissive_texture.extensions['KHR_texture_transform']
-                    mapping.scale = extension['scale'][0], extension['scale'][1], 1
+                    converted = texture_transform_gltf_to_blender(extension)
+                    mapping.rotation = [0, 0, converted['rotation']]
+                    mapping.scale = [converted['scale'][0], converted['scale'][1], 1]
+                    mapping.translation = [converted['offset'][0], converted['offset'][1], 0]
 
             # create links
             node_tree.links.new(mapping.inputs[0], uvmap.outputs[0])

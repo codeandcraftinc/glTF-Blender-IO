@@ -14,6 +14,7 @@
 
 import bpy
 from .gltf2_blender_texture import BlenderTextureInfo
+from ..com.gltf2_blender_conversion import texture_transform_gltf_to_blender
 
 
 class BlenderPbr():
@@ -201,7 +202,10 @@ class BlenderPbr():
             if pypbr.base_color_texture.extensions is not None:
                 if 'KHR_texture_transform' in pypbr.base_color_texture.extensions.keys():
                     extension = pypbr.base_color_texture.extensions['KHR_texture_transform']
-                    mapping.scale = extension['scale'][0], extension['scale'][1], 1
+                    converted = texture_transform_gltf_to_blender(extension)
+                    mapping.rotation = [0, 0, converted['rotation']]
+                    mapping.scale = [converted['scale'][0], converted['scale'][1], 1]
+                    mapping.translation = [converted['offset'][0], converted['offset'][1], 0]
 
             # Create links
             if vertex_color:
